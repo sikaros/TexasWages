@@ -26,9 +26,14 @@ async function openApp(page) {
  */
 async function waitForStore(page) {
   await page.waitForFunction(() => {
-    const g = window.Ext && Ext.ComponentQuery.query('grid[reference=wageGrid]')[0];
-    const s = g && g.getStore();
-    return !!s && !s.isLoading() && s.getCount() > 0;
+    try {
+      // During Ext boot the `Ext` global appears before ComponentQuery does,
+      // so guard both and swallow transient boot errors (return false -> keep polling).
+      if (!window.Ext || !window.Ext.ComponentQuery) return false;
+      const g = Ext.ComponentQuery.query('grid[reference=wageGrid]')[0];
+      const s = g && g.getStore();
+      return !!s && !s.isLoading() && s.getCount() > 0;
+    } catch (e) { return false; }
   }, undefined, { timeout: WAIT_TIMEOUT });
 }
 
@@ -103,13 +108,16 @@ async function chartBarCount(page) {
  */
 async function rowTextBySoc(page, soc) {
   await page.waitForFunction((socArg) => {
-    const grid = window.Ext && Ext.ComponentQuery.query('grid[reference=wageGrid]')[0];
-    const store = grid && grid.getStore();
-    if (!store) return false;
-    const idx = store.findExact('socCode', socArg);
-    if (idx === -1) return false;
-    grid.ensureVisible(idx);
-    return !!grid.getView().getNode(store.getAt(idx));
+    try {
+      if (!window.Ext || !window.Ext.ComponentQuery) return false;
+      const grid = Ext.ComponentQuery.query('grid[reference=wageGrid]')[0];
+      const store = grid && grid.getStore();
+      if (!store) return false;
+      const idx = store.findExact('socCode', socArg);
+      if (idx === -1) return false;
+      grid.ensureVisible(idx);
+      return !!grid.getView().getNode(store.getAt(idx));
+    } catch (e) { return false; }
   }, soc, { timeout: WAIT_TIMEOUT });
 
   return page.evaluate((socArg) => {
