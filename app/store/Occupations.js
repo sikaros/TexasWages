@@ -17,7 +17,10 @@ Ext.define('TexasWages.store.Occupations', {
         url: 'resources/data/tx_oews.json',
         reader: {
             type: 'json',
-            rootProperty: 'rows'
+            rootProperty: 'rows',
+            // Capture the dataset's `meta` block (dataYear/source/area/rowCount) into
+            // reader.metaData so the UI can show data provenance/vintage.
+            metaProperty: 'meta'
         }
     },
 

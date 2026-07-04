@@ -14,7 +14,9 @@ Ext.define('TexasWages.view.main.OccupationGrid', {
         'Ext.grid.filters.Filters',
         'Ext.grid.feature.GroupingSummary',
         'Ext.toolbar.Toolbar',
-        'Ext.form.field.Text'
+        'Ext.form.field.Text',
+        'Ext.form.field.Number',
+        'Ext.form.field.ComboBox'
     ],
 
     store: { type: 'occupations' },
@@ -39,6 +41,7 @@ Ext.define('TexasWages.view.main.OccupationGrid', {
     },
 
     dockedItems: [{
+        // Row 1 — free-text search + export.
         xtype: 'toolbar',
         dock: 'top',
         items: [{
@@ -48,20 +51,75 @@ Ext.define('TexasWages.view.main.OccupationGrid', {
             emptyText: 'Search job title or SOC code…',
             width: 340,
             triggers: {
+                search: {
+                    // Neutral trigger (no theme sprite) so the painted glyph is the only icon.
+                    cls: 'tw-search-trigger',
+                    weight: -1
+                },
                 clear: {
                     cls: 'x-form-clear-trigger',
                     handler: 'onClearSearch'
                 }
             },
             listeners: {
-                change: { fn: 'onSearch', buffer: 200 }
+                change: { fn: 'onSearch', buffer: 200 },
+                afterrender: function (fld) {
+                    // Paint a Font Awesome magnifier into the (otherwise empty) search trigger.
+                    var t = fld.getTrigger('search');
+                    if (t && t.el) {
+                        t.el.dom.innerHTML =
+                            '<i class="x-fa fa-search" style="color:#919eab;font-size:13px;"></i>';
+                    }
+                }
             }
         }, '->', {
             xtype: 'button',
             text: 'Export CSV',
-            iconCls: 'fa-download',
+            iconCls: 'x-fa fa-download',
             testId: 'export-csv',
             handler: 'onExportCsv'
+        }]
+    }, {
+        // Row 2 — always-visible filter bar (the "knobs"): major group, min wage,
+        // reset, and a data-vintage chip on the right. Per-column menu filters remain
+        // available for power users, but these surface the common filters up front.
+        xtype: 'toolbar',
+        dock: 'top',
+        style: 'background-color:#f4f6f8;border-top:1px solid #dfe3e8;',
+        items: [{
+            xtype: 'tbtext',
+            html: '<i class="x-fa fa-filter" style="margin-right:6px;color:#637381;"></i>' +
+                '<span style="color:#454f5b;font-weight:600;">Filters</span>'
+        }, {
+            xtype: 'combobox',
+            reference: 'majorGroupFilter',
+            testId: 'major-group-filter',
+            width: 210,
+            emptyText: 'All major groups',
+            editable: false,
+            queryMode: 'local',
+            displayField: 'title',
+            valueField: 'code',
+            triggerAction: 'all',
+            store: { fields: ['code', 'title'], data: [] },
+            listeners: { change: 'onMajorGroupChange' }
+        }, {
+            xtype: 'numberfield',
+            reference: 'minWageFilter',
+            testId: 'min-wage-filter',
+            width: 140,
+            emptyText: 'Min median $',
+            minValue: 0,
+            step: 5000,
+            hideTrigger: false,
+            listeners: { change: { fn: 'onMinWageChange', buffer: 300 } }
+        }, {
+            xtype: 'button',
+            text: 'Reset',
+            iconCls: 'x-fa fa-undo',
+            testId: 'reset-filters',
+            tooltip: 'Clear search and all filters',
+            handler: 'onResetFilters'
         }]
     }],
 

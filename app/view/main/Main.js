@@ -23,8 +23,19 @@ Ext.define('TexasWages.view.main.Main', {
     header: {
         title: {
             bind: { text: '{title}' },
-            iconCls: 'fa-map-marker'
-        }
+            iconCls: 'x-fa fa-map-marker-alt',
+            flex: 1
+        },
+        // The title flexes, so this vintage chip is pushed to the far right of the
+        // full-width header — the always-visible "when is this data from" indicator.
+        // Populated by MainController#onStoreLoad from the dataset meta.
+        items: [{
+            xtype: 'component',
+            reference: 'vintageText',
+            testId: 'data-vintage',
+            style: 'margin-right:8px;font-size:12px;',
+            html: ''
+        }]
     },
 
     items: [
@@ -44,5 +55,24 @@ Ext.define('TexasWages.view.main.Main', {
             collapsible: true,
             split: true
         }
-    ]
+    ],
+
+    // Full-width provenance / citation footer. Populated from the dataset's `meta`
+    // block once the store loads (MainController#onStoreLoad); the static text is the
+    // fallback shown before load and satisfies the BLS attribution request.
+    bbar: {
+        style: 'background-color:#fafbfc;border-top:1px solid #dfe3e8;',
+        items: [{
+            xtype: 'tbtext',
+            reference: 'provenanceText',
+            testId: 'data-provenance',
+            html: '<i class="x-fa fa-database" style="margin-right:6px;color:#637381;"></i>' +
+                'Source: U.S. Bureau of Labor Statistics — Occupational Employment &amp; Wage Statistics (OEWS)'
+        }, '->', {
+            xtype: 'tbtext',
+            html: '<a href="https://www.bls.gov/oes/" target="_blank" rel="noopener" ' +
+                'style="color:#1976d2;text-decoration:none;">bls.gov/oes <i class="x-fa fa-external-link-alt" ' +
+                'style="font-size:10px;"></i></a>'
+        }]
+    }
 });
