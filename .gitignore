@@ -1,0 +1,13 @@
+/build
+bootstrap.*
+classic.json*
+modern.json*
+.sencha
+/ext
+node_modules/
+test-results/
+playwright-report/
+.pytest_cache/
+__pycache__/
+*.pyc
+.venv/
