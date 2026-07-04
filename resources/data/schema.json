@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TexasWages OEWS dataset",
+  "description": "Contract for resources/data/tx_oews.json produced by tools/convert_oews.py.",
+  "type": "object",
+  "required": ["meta", "rows"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["dataYear", "source", "area"],
+      "properties": {
+        "dataYear": { "type": "string" },
+        "source": { "type": "string" },
+        "area": { "type": "string" },
+        "generated": { "type": "string" },
+        "rowCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/occupation" }
+    }
+  },
+  "definitions": {
+    "occupation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "socCode", "title", "oGroup", "majorGroupCode", "majorGroupTitle",
+        "totalEmp", "jobsPer1000", "locQuotient",
+        "hMean", "aMean", "hMedian", "aMedian",
+        "hPct10", "hPct25", "hPct75", "hPct90",
+        "aPct10", "aPct25", "aPct75", "aPct90",
+        "topCoded", "wageSuppressed", "empSuppressed"
+      ],
+      "properties": {
+        "socCode": { "type": "string", "pattern": "^[0-9]{2}-[0-9]{4}$" },
+        "title": { "type": "string", "minLength": 1 },
+        "oGroup": { "type": "string", "enum": ["detailed"] },
+        "majorGroupCode": { "type": "string", "pattern": "^[0-9]{2}-0000$" },
+        "majorGroupTitle": { "type": "string", "minLength": 1 },
+        "totalEmp": { "type": ["integer", "null"], "minimum": 0 },
+        "jobsPer1000": { "type": ["number", "null"], "minimum": 0 },
+        "locQuotient": { "type": ["number", "null"], "minimum": 0 },
+        "hMean": { "type": ["number", "null"], "minimum": 0 },
+        "aMean": { "type": ["integer", "null"], "minimum": 0 },
+        "hMedian": { "type": ["number", "null"], "minimum": 0 },
+        "aMedian": { "type": ["integer", "null"], "minimum": 0 },
+        "hPct10": { "type": ["number", "null"], "minimum": 0 },
+        "hPct25": { "type": ["number", "null"], "minimum": 0 },
+        "hPct75": { "type": ["number", "null"], "minimum": 0 },
+        "hPct90": { "type": ["number", "null"], "minimum": 0 },
+        "aPct10": { "type": ["integer", "null"], "minimum": 0 },
+        "aPct25": { "type": ["integer", "null"], "minimum": 0 },
+        "aPct75": { "type": ["integer", "null"], "minimum": 0 },
+        "aPct90": { "type": ["integer", "null"], "minimum": 0 },
+        "topCoded": { "type": "boolean" },
+        "wageSuppressed": { "type": "boolean" },
+        "empSuppressed": { "type": "boolean" }
+      }
+    }
+  }
+}

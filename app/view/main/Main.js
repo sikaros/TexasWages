@@ -1,103 +1,48 @@
 /**
- * This class is the main view for the application. It is specified in app.js as the
- * "mainView" property. That setting automatically applies the "viewport"
- * plugin causing this view to become the body element (i.e., the viewport).
- *
- * TODO - Replace this content of this view to suite the needs of your application.
+ * Main viewport: a border layout with the occupation grid in the center and a
+ * collapsible detail panel (KPI tiles + wage-percentile chart) on the east.
  */
 Ext.define('TexasWages.view.main.Main', {
-    extend: 'Ext.tab.Panel',
+    extend: 'Ext.panel.Panel',
     xtype: 'app-main',
 
     requires: [
         'Ext.plugin.Viewport',
         'Ext.window.MessageBox',
-
         'TexasWages.view.main.MainController',
         'TexasWages.view.main.MainModel',
-        'TexasWages.view.main.List'
+        'TexasWages.view.main.OccupationGrid',
+        'TexasWages.view.main.DetailPanel'
     ],
 
     controller: 'main',
     viewModel: 'main',
 
-    ui: 'navigation',
-
-    tabBarHeaderPosition: 1,
-    titleRotation: 0,
-    tabRotation: 0,
+    layout: 'border',
 
     header: {
-        layout: {
-            align: 'stretchmax'
-        },
         title: {
-            bind: {
-                text: '{name}'
-            },
-            flex: 0
+            bind: { text: '{title}' },
+            iconCls: 'fa-map-marker'
+        }
+    },
+
+    items: [
+        {
+            xtype: 'occupationgrid',
+            region: 'center',
+            reference: 'wageGrid',
+            testId: 'wage-grid'
         },
-        iconCls: 'fa-th-list'
-    },
-
-    tabBar: {
-        flex: 1,
-        layout: {
-            align: 'stretch',
-            overflowHandler: 'none'
+        {
+            xtype: 'occupationdetail',
+            region: 'east',
+            reference: 'detailPanel',
+            testId: 'detail-panel',
+            width: 400,
+            minWidth: 320,
+            collapsible: true,
+            split: true
         }
-    },
-
-    responsiveConfig: {
-        tall: {
-            headerPosition: 'top'
-        },
-        wide: {
-            headerPosition: 'left'
-        }
-    },
-
-    defaults: {
-        bodyPadding: 20,
-        tabConfig: {
-            responsiveConfig: {
-                wide: {
-                    iconAlign: 'left',
-                    textAlign: 'left'
-                },
-                tall: {
-                    iconAlign: 'top',
-                    textAlign: 'center',
-                    width: 120
-                }
-            }
-        }
-    },
-
-    items: [{
-        title: 'Home',
-        iconCls: 'fa-home',
-        // The following grid shares a store with the classic version's grid as well!
-        items: [{
-            xtype: 'mainlist'
-        }]
-    }, {
-        title: 'Users',
-        iconCls: 'fa-user',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }, {
-        title: 'Groups',
-        iconCls: 'fa-users',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }, {
-        title: 'Settings',
-        iconCls: 'fa-cog',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }]
+    ]
 });
