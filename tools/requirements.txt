@@ -1,0 +1,8 @@
+# Dependencies for the BLS OEWS -> tx_oews.json pipeline (tools/convert_oews.py)
+# and its pytest suite. Loosely pinned to current majors.
+pandas>=2.0
+openpyxl>=3.1
+jsonschema>=4.0
+
+# Test suite
+pytest>=8.0

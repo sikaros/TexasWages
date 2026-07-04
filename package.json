@@ -1,0 +1,12 @@
+{
+  "name": "texaswages-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright end-to-end suite for the TexasWages Ext JS app (validates against sencha app watch on http://localhost:1841).",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
+  }
+}
